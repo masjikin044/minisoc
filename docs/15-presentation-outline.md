@@ -1,0 +1,10 @@
+# 15 — Outline Presentasi (±15 menit)
+1. Latar belakang & tujuan (1 slide)
+2. Arsitektur & alur data (1)
+3. Komponen: nginx, VulnShop, SOC (1)
+4. Detection rules & cooldown (1)
+5. Demo langsung: serangan dari Kali → alert di dashboard (3–4 menit)
+6. Insiden, audit, laporan (1)
+7. Hasil 14 test case (1)
+8. Keterbatasan & pengembangan lanjut (1)
+9. Tanya jawab

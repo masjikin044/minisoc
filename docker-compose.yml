@@ -1,0 +1,83 @@
+name: mini-soc
+services:
+  nginx:
+    image: nginx:1.27-alpine
+    restart: unless-stopped
+    ports:
+      - "${BIND_IP:-127.0.0.1}:80:80"
+    environment:
+      SERVER_NAME: ${SERVER_NAME:-_}
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/templates:/etc/nginx/templates:ro
+    depends_on:
+      vulnshop: { condition: service_healthy }
+      soc-api: { condition: service_healthy }
+    networks: [mini-soc-net]
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  vulnshop:
+    build:
+      context: ./apps/vulnshop
+      network: host   # build memakai jaringan host (menghindari masalah DNS/firewall)
+      args:
+        NPM_REGISTRY: ${NPM_REGISTRY:-https://registry.npmjs.org/}
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      DATA_DIR: /data
+      SOC_URL: http://soc-api:8080/api/events
+      SOC_INGEST_TOKEN: ${SOC_INGEST_TOKEN:?isi SOC_INGEST_TOKEN di .env}
+      SESSION_SECRET: ${SESSION_SECRET:?isi SESSION_SECRET di .env}
+    volumes:
+      - vulnshop-data:/data
+    expose: ["3000"]
+    networks: [mini-soc-net]
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 20s
+      timeout: 5s
+      retries: 5
+
+  soc-api:
+    build:
+      context: ./apps/soc
+      network: host   # build memakai jaringan host (menghindari masalah DNS/firewall)
+      args:
+        NPM_REGISTRY: ${NPM_REGISTRY:-https://registry.npmjs.org/}
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 8080
+      DATA_DIR: /data
+      BASE_PATH: /soc
+      RULES_FILE: /app/rules/detection-rules.json
+      SOC_INGEST_TOKEN: ${SOC_INGEST_TOKEN:?isi SOC_INGEST_TOKEN di .env}
+      SESSION_SECRET: ${SESSION_SECRET:?isi SESSION_SECRET di .env}
+      SOC_ADMIN_USER: ${SOC_ADMIN_USER:-admin}
+      SOC_ADMIN_PASSWORD: ${SOC_ADMIN_PASSWORD:?isi SOC_ADMIN_PASSWORD di .env}
+    volumes:
+      - soc-data:/data
+      - ./rules:/app/rules:ro
+    expose: ["8080"]
+    networks: [mini-soc-net]
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:8080/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 20s
+      timeout: 5s
+      retries: 5
+
+networks:
+  mini-soc-net:
+    driver: bridge
+
+volumes:
+  soc-data:
+    name: mini-soc-soc-data
+  vulnshop-data:
+    name: mini-soc-vulnshop-data

@@ -1,0 +1,21 @@
+<!doctype html><html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mini SOC</title><link rel="stylesheet" href="css/dashboard.css"></head><body>
+<header class="top"><strong>Mini SOC</strong>
+<nav id="tabs"><button data-t="overview" class="on">Ringkasan</button><button data-t="alerts">Alert</button>
+<button data-t="incidents">Insiden</button><button data-t="audit">Audit</button><button data-t="reports">Laporan</button></nav>
+<form method="post" action="logout" onsubmit="event.preventDefault();fetch('logout',{method:'POST'}).then(()=>location.href='login')"><button class="ghost">Keluar</button></form></header>
+<main>
+<section id="overview">
+ <div class="cards" id="cards"></div>
+ <div class="row"><div class="panel"><h2>Aktivitas per jam</h2><canvas id="cTime" height="120"></canvas></div>
+ <div class="panel"><h2>Severity</h2><canvas id="cSev" height="120"></canvas></div></div>
+ <div class="row"><div class="panel"><h2>IP teratas</h2><div id="topIps"></div></div>
+ <div class="panel"><h2>Rule teratas</h2><div id="topRules"></div></div></div>
+</section>
+<section id="alerts" hidden><div class="panel"><div class="tools"><select id="sevFilter"><option value="">Semua severity</option><option>critical</option><option>high</option><option>medium</option><option>low</option></select></div><div class="scroll"><table id="tAlerts"></table></div></div></section>
+<section id="incidents" hidden><div class="panel scroll"><table id="tInc"></table></div></section>
+<section id="audit" hidden><div class="panel scroll"><table id="tAudit"></table></div></section>
+<section id="reports" hidden><div class="panel"><h2>Ekspor laporan</h2><p class="muted">Alert 24 jam terakhir dalam format CSV.</p><a class="btn" href="api/reports/alerts.csv?hours=24">Unduh alerts.csv</a></div></section>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<script src="js/dashboard.js"></script></body></html>

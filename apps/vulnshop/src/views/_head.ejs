@@ -1,0 +1,8 @@
+<!doctype html><html lang="id"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>VulnShop</title><link rel="stylesheet" href="/css/style.css"></head><body>
+<header class="bar"><a class="brand" href="/">VulnShop</a>
+<form class="search" action="/search" method="get"><input name="q" placeholder="Cari produk" value="<%= typeof q !== 'undefined' ? q : '' %>"><button>Cari</button></form>
+<nav><% if (user) { %><span class="muted"><%= user %></span>
+<form action="/logout" method="post" class="inline"><button class="ghost">Keluar</button></form>
+<% } else { %><a href="/login">Masuk</a><% } %></nav></header><main>

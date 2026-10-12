@@ -1,0 +1,11 @@
+# 14 — Keterbatasan & Keamanan
+- Lab LAN saja; tidak ada TLS (HTTP port 80). Jangan ekspos ke internet.
+- Session disimpan di memori: login ulang setelah restart. Lockout juga di memori.
+- Deteksi berbasis regex/ambang; bisa dilewati (encoding lain) dan bisa false positive.
+- Tidak ada retensi otomatis; tabel events akan membesar.
+- Satu akun admin; tanpa MFA/role.
+- Satu sumber event (VulnShop). Log nginx belum diingest ke SOC.
+- Proteksi CSRF dasar (SameSite + header kustom).
+- Ganti kredensial awal dan akun demo; jangan commit `.env`.
+- Gunakan alat uji hanya pada sistem milik sendiri dengan izin.
+- `node:sqlite` masih berstatus experimental di Node 22 (API stabil untuk kebutuhan proyek ini).

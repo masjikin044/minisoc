@@ -1,0 +1,7 @@
+<%- include('_head', {q: ''}) %>
+<h1>Masuk</h1><% if (error) { %><p class="err"><%= error %></p><% } %>
+<form method="post" action="/login" class="stack narrow">
+<input name="username" placeholder="Username" autocomplete="username" required>
+<input name="password" type="password" placeholder="Password" autocomplete="current-password" required><button>Masuk</button></form>
+<p class="muted">Akun demo lab: demo / demo12345</p>
+<%- include('_foot') %>

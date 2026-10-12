@@ -1,0 +1,7 @@
+<%- include('_head', {q: ''}) %>
+<h1><%= p.name %></h1><p><%= p.description %></p><p><strong>Rp <%= p.price.toLocaleString('id-ID') %></strong></p>
+<h2>Komentar</h2>
+<form method="post" action="/product/<%= p.id %>/comment" class="stack">
+<input name="author" placeholder="Nama" maxlength="40"><textarea name="body" placeholder="Tulis komentar" maxlength="500" required></textarea><button>Kirim</button></form>
+<% comments.forEach(c => { %><div class="card"><strong><%= c.author %></strong><p><%= c.body %></p></div><% }) %>
+<%- include('_foot') %>

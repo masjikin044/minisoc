@@ -1,0 +1,30 @@
+upstream vulnshop_up { server vulnshop:3000; }
+upstream soc_up      { server soc-api:8080; }
+
+server {
+  listen 80;
+  server_name ${SERVER_NAME};
+  limit_req zone=perip burst=40 nodelay;
+
+  # IP asli client: DITIMPA oleh nginx, bukan dari header client
+  proxy_set_header Host              $host;
+  proxy_set_header X-Real-IP         $remote_addr;
+  proxy_set_header X-Forwarded-For   $remote_addr;
+  proxy_set_header X-Forwarded-Proto $scheme;
+  proxy_set_header Cookie            $http_cookie;
+
+  # Endpoint ingest hanya untuk jaringan internal Docker
+  location = /soc/api/events { return 403; }
+  location = /soc            { return 301 /soc/; }
+  location = /soc/login {
+    limit_req zone=login burst=5 nodelay;
+    proxy_pass http://soc_up/login;
+  }
+  location /soc/ { proxy_pass http://soc_up/; }
+
+  location = /login {
+    limit_req zone=login burst=5 nodelay;
+    proxy_pass http://vulnshop_up;
+  }
+  location / { proxy_pass http://vulnshop_up; }
+}

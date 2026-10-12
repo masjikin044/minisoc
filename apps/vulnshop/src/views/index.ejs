@@ -1,0 +1,7 @@
+<%- include('_head') %>
+<h1><%= q ? 'Hasil untuk: ' + q : 'Produk' %></h1>
+<% if (!products.length) { %><p class="muted">Tidak ada produk ditemukan.</p><% } %>
+<div class="grid"><% products.forEach(p => { %>
+<a class="card" href="/product/<%= p.id %>"><h3><%= p.name %></h3><p class="muted"><%= p.description %></p><strong>Rp <%= p.price.toLocaleString('id-ID') %></strong></a>
+<% }) %></div>
+<%- include('_foot') %>
